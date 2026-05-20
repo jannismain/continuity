@@ -1,0 +1,23 @@
+[project]
+name = "continuity"
+version = "0.1.0"
+description = "a two-agent therapy demo where the therapist remembers"
+readme = "README.md"
+authors = [
+    { name = "Jannis Mainczyk", email = "jmainczyk@gmail.com" },
+]
+requires-python = ">=3.13"
+dependencies = [
+    "anthropic>=2.4.0",
+    "dotenv>=0.9.9",
+    "fastapi>=0.162.0",
+    "pydantic>=2.14.2",
+    "uvicorn>=0.54.0",
+]
+
+[project.scripts]
+continuity = "continuity:main"
+
+[build-system]
+requires = ["uv_build>=0.13.5,<0.14.0"]
+build-backend = "uv_build"

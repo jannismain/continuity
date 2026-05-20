@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>continuity.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='12' cy='16' r='9' fill='none' stroke='%23d97757' stroke-width='3'/%3E%3Ccircle cx='20' cy='16' r='9' fill='none' stroke='%23141413' stroke-width='3'/%3E%3C/svg%3E">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><circle cx="15" cy="20" r="11"/><circle cx="25" cy="20" r="11"/></svg>
+    <div>
+      <div class="brand-name">continuity<span class="dot-accent">.</span></div>
+      <div class="brand-sub">A therapist who remembers</div>
+    </div>
+  </div>
+  <nav class="views" role="tablist">
+    <button class="view-tab active" data-view="room" role="tab">Session room</button>
+    <button class="view-tab" data-view="picture" role="tab">Clinical picture</button>
+  </nav>
+  <div class="top-right">
+    <div class="timeline" id="timeline" aria-label="Sessions"></div>
+    <button class="ghost small" id="resetBtn" title="Erase memory and all sessions">Reset</button>
+  </div>
+</header>
+
+<main>
+  <!-- ============ SESSION ROOM ============ -->
+  <section class="view room active" id="view-room">
+    <aside class="col left" id="leftCol">
+      <button class="rail" data-side="left" aria-label="Expand session setup" title="Expand session setup">
+        <svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg><span>Session setup</span>
+      </button>
+      <div class="col-bar">
+        <span class="label">Session setup</span>
+        <button class="col-toggle" data-side="left" aria-label="Collapse session setup" title="Collapse"><svg class="chev" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+      </div>
+      <div class="card persona">
+        <div class="avatar patient">J</div>
+        <div>
+          <div class="persona-name">Jonas Becker, 29</div>
+          <div class="muted">Product designer · Neukölln, Berlin</div>
+          <div class="tags"><span class="tag">simulated client</span><span class="tag">ADHD signs</span></div>
+        </div>
+      </div>
+
+      <div class="card week" id="weekCard">
+        <div class="eyebrow"><svg class="i" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><path d="M3 3l18 18"/></svg>Only Jonas knows this</div>
+        <h3 id="weekHeading">This week in Jonas's life</h3>
+        <div class="presets" id="presets"></div>
+        <input id="weekTitle" class="field" placeholder="Give the week a title">
+        <textarea id="weekText" class="field" rows="5" placeholder="What happened to Jonas since the last session? Write anything: a fight, a win, a lost passport…"></textarea>
+        <button class="ghost small" id="surpriseBtn"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></svg>Surprise me</button>
+      </div>
+
+      <div class="card controls">
+        <label class="label">Who speaks for Jonas?</label>
+        <div class="segmented" id="modeSeg">
+          <button class="seg active" data-mode="auto">Claude (autopilot)</button>
+          <button class="seg" data-mode="manual">You</button>
+        </div>
+        <label class="label" for="lenRange">Session length <span id="lenVal">5</span> exchanges</label>
+        <input type="range" id="lenRange" min="3" max="8" value="5">
+        <button class="primary" id="startBtn">Begin session 1</button>
+        <p class="fineprint">Two Claude agents talk. The therapist only knows what she saved to memory last time.</p>
+      </div>
+    </aside>
+
+    <section class="col center">
+      <div class="session-head">
+        <div>
+          <div class="eyebrow" id="sessEyebrow">Session room</div>
+          <h2 id="sessTitle">Nobody here yet</h2>
+        </div>
+        <div class="status" id="status"><span class="dot"></span><span id="statusText">Idle</span></div>
+      </div>
+      <div class="chat" id="chat" aria-live="polite">
+        <div class="empty" id="empty">
+          <svg viewBox="0 0 120 80" class="empty-art" aria-hidden="true"><circle cx="48" cy="40" r="28"/><circle cx="72" cy="40" r="28"/></svg>
+          <h3>Two agents, one memory</h3>
+          <ol>
+            <li><b>Pick Jonas's week.</b> Something happens in his life that the therapist can't see.</li>
+            <li><b>Watch the session.</b> Dr. Lindqvist reads her notes, then talks with Jonas. Your choice whether Claude or you play him.</li>
+            <li><b>See her remember.</b> After the session she rewrites her own memory, and a supervisor scores mood, depression risk and ADHD signs.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="dock" id="dock">
+        <div class="run-controls" id="runControls" hidden>
+          <button class="ghost small" id="pauseBtn">Pause</button>
+          <button class="ghost small" id="wrapBtn">Wrap up now</button>
+        </div>
+        <form class="speak" id="speakForm" hidden>
+          <textarea id="speakText" rows="2" placeholder="Speak as Jonas… (Enter to send)"></textarea>
+          <button class="primary" type="submit">Say it</button>
+        </form>
+      </div>
+    </section>
+
+    <aside class="col right" id="rightCol">
+      <button class="rail" data-side="right" aria-label="Expand therapist memory" title="Expand therapist memory">
+        <svg class="chev" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg><span>Therapist memory</span><span class="rail-pulse" aria-hidden="true"></span>
+      </button>
+      <div class="mem-head">
+        <button class="col-toggle" data-side="right" aria-label="Collapse therapist memory" title="Collapse"><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+        <div class="mem-title">
+          <div class="eyebrow">Memory tool · /memories</div>
+          <h3>Dr. Lindqvist's notes</h3>
+        </div>
+        <div class="mem-legend"><span class="lg recall">read</span><span class="lg write">written</span></div>
+      </div>
+      <div class="mem-files" id="memFiles"></div>
+      <div class="mem-log">
+        <div class="label">Memory activity</div>
+        <ol id="memLog"></ol>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ============ CLINICAL PICTURE ============ -->
+  <section class="view picture" id="view-picture">
+    <div class="picture-empty" id="pictureEmpty">
+      <h2>No sessions yet</h2>
+      <p>Run a session and the clinical picture will assemble itself here, getting richer every week.</p>
+    </div>
+    <div id="pictureBody" hidden>
+      <div class="hero">
+        <div class="hero-text">
+          <div class="eyebrow" id="heroEyebrow">Current state</div>
+          <h1 id="heroHeadline"></h1>
+          <p class="formulation" id="heroState"></p>
+        </div>
+        <div class="safety" id="safetyBox"></div>
+        <div class="tiles" id="tiles"></div>
+      </div>
+
+      <div class="grid3">
+        <div class="card chart-card">
+          <div class="chart-title">Mood across sessions</div>
+          <div class="chart-sub">Overall valence, −1 to +1</div>
+          <div class="chart" id="chartMood"></div>
+        </div>
+        <div class="card chart-card">
+          <div class="chart-title">Depression risk</div>
+          <div class="chart-sub">Estimated PHQ-9 equivalent, 0–27</div>
+          <div class="chart" id="chartPhq"></div>
+        </div>
+        <div class="card chart-card">
+          <div class="chart-title">Within the latest session</div>
+          <div class="chart-sub">Valence of each of Jonas's turns</div>
+          <div class="chart" id="chartTurns"></div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="chart-title">ADHD indicators</div>
+          <div class="chart-sub">Strength of signs this session, 0–10 · <span class="tick-key"></span> previous session</div>
+          <div class="bars" id="adhdBars"></div>
+          <ul class="evidence" id="adhdEvidence"></ul>
+        </div>
+        <div class="card">
+          <div class="chart-title">Functioning</div>
+          <div class="chart-sub">0–10, higher is better · <span class="tick-key"></span> previous session</div>
+          <div class="bars" id="funcBars"></div>
+          <div class="chip-group"><div class="label">Themes</div><div class="chips" id="themes"></div></div>
+          <div class="chip-group"><div class="label">Strengths</div><div class="chips green" id="strengths"></div></div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card memory-card">
+          <div class="chart-title">How memory shaped this session</div>
+          <p class="change" id="changeSince"></p>
+          <ul class="callbacks" id="callbacks"></ul>
+          <div class="diff-list" id="diffList"></div>
+        </div>
+        <div class="card">
+          <div class="chart-title">Plan</div>
+          <div class="plan-row"><div class="label">Homework agreed</div><p id="homework"></p></div>
+          <div class="plan-row"><div class="label">Next session focus</div><p id="nextFocus"></p></div>
+          <div class="plan-row"><div class="label">Depression evidence</div><ul class="evidence" id="depEvidence"></ul></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="chart-title">Ideas for upcoming interventions</div>
+        <div class="interventions" id="interventions"></div>
+      </div>
+
+      <div class="card">
+        <div class="chart-title">Session history</div>
+        <div class="history" id="history"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">Simulated client · scores are AI estimates, not clinical instruments · built on the Claude Messages API with the Memory tool · <span id="modelName"></span></footer>
+<div class="tooltip" id="tooltip" role="tooltip"></div>
+<script src="/static/app.js"></script>
+</body>
+</html>
